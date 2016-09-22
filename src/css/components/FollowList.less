@@ -1,0 +1,60 @@
+.following {
+  position: relative;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .following-title {
+    font: bold 23px/40px "Helvetica Neue", Helvetica, Arial, sans-serif;
+    padding: 0 10px;
+    background: @green;
+    color: @white;
+  }
+
+  .following-list {
+    flex-grow: 1;
+    overflow-y: auto;
+
+    //关注记录
+    .following-item {
+      display: flex;
+      padding: 10px;
+      border-bottom: 1px solid #e5e5e5;
+
+      &:hover {
+        background: #f5f5f5;
+      }
+
+      &.selected {
+        background: #f5f5f5;
+      }
+
+      .following-item-label {
+        display: -webkit-box;
+        -webkit-box-align: center;
+        flex-grow: 1;
+      }
+
+      .sync-number {
+        flex-grow: 0;
+
+        .number {
+          display: block;
+          margin: 2px 0;
+        }
+
+      }
+
+    }
+
+  }
+
+  .following-footer {
+
+    width: 100%;
+    height: 40px;
+    background: @green;
+
+  }
+
+}

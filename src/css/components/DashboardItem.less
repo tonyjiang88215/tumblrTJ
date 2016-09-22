@@ -1,0 +1,55 @@
+.item {
+  font-size:12px;padding:10px 0 0;border-bottom:1px solid @borderColor;
+
+  //标题
+  .item-title {
+    position: relative;
+    padding:4px 0;
+    display:flex;
+    flex-direction: row;
+    cursor:default;
+
+    .title-icon{
+      font-size: 16px;
+      margin: 0 2px;
+      color: #9E9E9E;
+      cursor:pointer;
+
+      &.expend-icon{
+        position:absolute;
+        right:0;
+      }
+
+
+    }
+
+  }
+
+  //详情内容
+  .item-detail{
+    .detail-content{
+      border:1px solid @borderColor;
+      border-bottom:0;
+      padding:10px;
+    }
+
+    //关联图片
+    .item-img{
+      padding:10px;
+      border:1px solid @borderColor;
+      border-bottom:0;
+      background: @borderColor*1.05;
+
+      .img{
+        display:inline-block;margin:0 6px;border:1px solid @borderColor;border-radius: 2px;
+      }
+
+    }
+
+  }
+
+  .expend{cursor: pointer;margin-left:6px;}
+
+  //兼容代码
+  p{font-size:12px;line-height:15px;}
+}
