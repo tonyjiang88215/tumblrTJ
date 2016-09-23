@@ -2,7 +2,9 @@
  * Created by TonyJiang on 16/9/18.
  */
 import React from "react";
+
 import store from '../../store';
+import RecordAPI from '../../api/RecordAPI';
 
 import DashboardItem from './DashboardItem';
 
@@ -53,16 +55,12 @@ export default class FavoriteList extends React.Component{
             return;
         }
 
-        store.recordStore.getRecordList(follower.id)
-            .then(data => {
+        RecordAPI.getFavoriteList(follower.id).then(data => {
+            const originalData = data.map(item => item.original_json);
 
-
-                const originalData = data.map(item => item.original_json);
-
-                this.data = this.data.concat(originalData);
-                this.forceUpdate();
-
-            });
+            this.data = this.data.concat(originalData);
+            this.forceUpdate();
+        });
 
     }
 

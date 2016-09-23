@@ -4,10 +4,6 @@
 import React from 'react';
 import {ListItem} from 'material-ui/List';
 
-import blogSync from '../../module/BlogSync';
-import store from '../../store';
-
-
 class FollowListItem extends React.Component {
 
     static propTypes = {
@@ -31,18 +27,12 @@ class FollowListItem extends React.Component {
     }
 
     render() {
-
         const {id, name} = this.props.blog;
         const {selected} = this.context;
 
         const className = 'following-item ' + (id == selected ? 'selected' : '');
 
         return (
-            // <ListItem
-            //     className="following-item"
-            //     primaryText={name}
-            //     onTouchTap={this.onClick.bind(this)}
-            // />
             <div className={className} onClick={::this.onClick}>
                 <div className="following-item-label">{name}</div>
                 <div className="sync-number">
@@ -52,19 +42,6 @@ class FollowListItem extends React.Component {
             </div>
         );
     }
-
-    checkBlogUpdate(blog) {
-        blogSync.push(blog).then(data => {
-
-            const {blogInfo, finishCount} = data;
-
-            this.setState({totalCount: blogInfo['posts-total'], finishCount});
-
-            store.followStore.syncFollow(blog.id, blogInfo, finishCount);
-
-        });
-    }
-
 
     onClick() {
 

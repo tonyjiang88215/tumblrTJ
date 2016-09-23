@@ -4,7 +4,7 @@
 import React from "react";
 import {observable} from "mobx";
 import {observer} from "mobx-react";
-import tumblrAPI from '../../api/tumblr';
+import tumblrAPI from '../../api/TumblrAPI';
 
 import DashboardItem from './DashboardItem';
 import RaisedButton from 'material-ui/RaisedButton';

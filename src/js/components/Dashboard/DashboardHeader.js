@@ -2,7 +2,7 @@
  * Created by TonyJiang on 16/7/18.
  */
 import React from 'React';
-import api from '../../api/tumblr';
+import api from '../../api/TumblrAPI';
 import store from '../../store';
 import {observable, observe, transaction, action} from 'mobx';
 import {observer} from 'mobx-react';

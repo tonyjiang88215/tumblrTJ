@@ -11,7 +11,7 @@ import FavoriteList from "./FavoriteList";
 import DashboardItem from './DashboardItem';
 
 import store from '../../store';
-import api from '../../api/tumblr';
+import api from '../../api/TumblrAPI';
 
 class Dashboard extends Component {
 

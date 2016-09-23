@@ -7,8 +7,8 @@ import {Router , Route} from 'react-router';
 
 import injectTapEventPlugin from 'react-tap-event-plugin';
 
-
-import $ from 'zepto-modules'
+import mutants from "chanjet-mutants";
+import $ from 'zepto-modules';
 window.$ = $;
 
 import RouterHandler from './RouterHandler'

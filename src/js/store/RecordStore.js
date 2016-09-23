@@ -4,21 +4,20 @@
 import {observable, transaction, map} from 'mobx';
 import axios from 'axios';
 
-import Record from './entity/Record';
-import Immutable from 'immutable';
+import RecordAPI from "../api/RecordAPI";
 
+import RecordEntity from './entity/RecordEntity';
+import Store from "./Store";
 
-class RecordStore {
-
-    // @observable _cacheFollows = map();
+export default class RecordStore extends Store{
 
     updateTimeStamp = 0;
 
     //5分钟更新一次
     updateTimeUnit = 5 * 60 * 1000;
 
-    constructor() {
-        this._cacheRecords = observable(map());
+    constructor(){
+        super(RecordEntity);
     }
 
     getRecordCount(id){
@@ -43,24 +42,29 @@ class RecordStore {
     }
 
     getRecordList(id){
+
+        // return this._getCache(id);
         
         return axios.get(`http://localhost:3000/record/list/${id}`)
             .then(response => {
-                const {status, data} = response;
+                const {status, data, message} = response;
                 if (status == 200) {
 
                     console.log('data' , data);
 
                     if(data.result == true){
-                        this._syncCacheModel(data.data);
+                        transaction(() => {
+                            data.data.map(item =>  this._syncCacheModel(item));
+                        });
+
 
                         return Promise.resolve(data.data);
                     }else{
-                        return Promise.reject();
+                        return Promise.reject(message);
                     }
 
                 }else{
-                    return Promise.reject();
+                    return Promise.reject('error');
                 }
             }).catch(err => {
                 return Promise.reject(err);
@@ -96,45 +100,45 @@ class RecordStore {
 
     }
 
-    _syncCacheModel(item) {
-        const id = item.id;
 
-        const cacheItem = this._getCache(id, true, (_cacheItem) => {
 
-            const fields = Record.fields.toJS();
-            fields.forEach((field) => {
-                var key = field.name,
-                    value = item[key];
-                if (_cacheItem[key] !== value) {
-                    _cacheItem[key] = value;
-                }
+    //获取当前id的缓存集合
+    _getCacheList(follower_id, createIfNotExists = true , dataSetter){
+        let list = this._cacheRecords.get(`${follower_id}`);
+
+        //如果当前follower的缓存不存在, 则创建缓存对象
+        if(!list && createIfNotExists){
+            list = observable(map());
+
+            if (typeof(dataSetter) === 'function') {
+                dataSetter(list);
+            }
+
+            //调用api查询缓存的列表集合
+            RecordAPI.getFavoriteList(follower_id).then(data => {
+                //批处理
+                transaction(() => {
+                    //将每一条加入list中
+                    data.map(record => {
+
+                    });
+                });
+
             });
-        });
 
-        return cacheItem;
-    }
+            this._cacheRecords.set(`${follower_id}`, list);
 
-    _getCache(id, createIfNotExists = true, dataSetter) {
-        let record = this._cacheRecords.get(`${id}`);
 
-        if (!record && createIfNotExists) {
-            record = new Record(id);
-
+        }else{
             if (typeof(dataSetter) === 'function') {
-                dataSetter(record);
-            }
-
-            this._cacheRecords.set(`${id}`, record);
-        }
-        else {
-            if (typeof(dataSetter) === 'function') {
-                dataSetter(record);
+                dataSetter(list);
             }
         }
 
-        return record;
+        return list;
+
     }
+
+
 
 }
-
-export default RecordStore;

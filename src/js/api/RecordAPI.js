@@ -3,7 +3,7 @@
  */
 import axios from 'axios';
 
-export default class recordAPI{
+class RecordAPI{
 
     getFavoriteList(follower_id){
         return axios.get(`http://localhost:3000/record/list/${follower_id}`)
@@ -26,3 +26,5 @@ export default class recordAPI{
     }
 
 }
+
+export default new RecordAPI();

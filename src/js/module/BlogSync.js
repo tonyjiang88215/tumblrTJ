@@ -2,7 +2,7 @@
  * Created by TonyJiang on 16/7/15.
  */
 
-import tumblrAPI from '../api/tumblr';
+import tumblrAPI from '../api/TumblrAPI';
 import store from '../store';
 
 class BlogSync{

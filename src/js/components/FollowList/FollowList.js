@@ -12,6 +12,8 @@ import ContentAdd from 'material-ui/svg-icons/content/add';
 import FlatButton from 'material-ui/FlatButton';
 import Dialog from 'material-ui/Dialog';
 
+import VirtualList from "chanjet-virtual-list";
+
 import TipHelper from '../../helpers/tip';
 
 import store from '../../store';
@@ -51,41 +53,41 @@ class FollowList extends Component {
 
     initialize() {
 
-        this.onItemClick = ::this.onItemClick;
-        this.onAddNewFollow = ::this.onAddNewFollow;
-        this.onAddFollowClose = ::this.onAddFollowClose;
-        this.observeDataChange = ::this.observeDataChange;
-
         this.loadList();
 
     }
 
     loadList() {
 
-        this.list = observable(store.followStore.follow);
-        this.dataObservers.push(observe(store.followStore.follow, this.observeDataChange));
+        this.list = store.followStore.follow;
+        this.listIDS = store.followStore.followIDS;
 
     }
 
-    observeDataChange(change) {
-        const {type, newValue} = change;
+    itemRenderer = (index, key) => {
+        const itemKey = this.listIDS[index];
+        const item = this.list.get(itemKey);
 
-        this.forceUpdate();
+        return (
+            <FollowListItem
+                key={key}
+                blog={item}
+                onClick={this.onItemClick}
+            />
+        );
+
     }
 
     render() {
 
-        const list = [];
-        this.list.forEach((item, index) => {
+        console.log('followerList render')
 
-            list.push(
-                <FollowListItem
-                    key={index}
-                    blog={item}
-                    onClick={this.onItemClick}
-                />
-            );
-        });
+        const dataSize = this.list ? this.list.size : 0;
+        const virtualListStyle = {
+            flexGrow: 1,
+            width: 'auto',
+            height: 'auto'
+        };
 
         return (
             <div className="following">
@@ -94,7 +96,16 @@ class FollowList extends Component {
                     <ContentAdd onTouchTap={this.onAddNewFollow}/>
                 </div>
                 <div className="following-list">
-                    {list}
+                    {dataSize > 0 &&
+                    <VirtualList
+                        style={virtualListStyle}
+                        className="following-virtual-list"
+                        itemRenderer={this.itemRenderer}
+                        estimateHeight={41}
+                        redundancy={20}
+                        size={dataSize}
+                    />
+                    }
                 </div>
                 <div className="following-footer"></div>
                 <AddFollow
@@ -107,16 +118,16 @@ class FollowList extends Component {
 
     }
 
-    onItemClick(item) {
+    onItemClick = (item) => {
         this.setState({selected: item.id});
         this.props.onItemClick && this.props.onItemClick(item);
     }
 
-    onAddNewFollow() {
+    onAddNewFollow = () => {
         this.setState({addFollowShow: true});
     }
 
-    onAddFollowClose() {
+    onAddFollowClose = () => {
         this.setState({addFollowShow: false});
     }
 

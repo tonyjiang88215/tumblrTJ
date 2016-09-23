@@ -11,7 +11,7 @@ import TextField from 'material-ui/TextField';
 import Divider from 'material-ui/Divider';
 import RefreshIndicator from 'material-ui/RefreshIndicator';
 
-import tumblrAPI from '../../api/tumblr';
+import tumblrAPI from '../../api/TumblrAPI';
 import TipHelper from '../../helpers/tip';
 import store from '../../store';
 

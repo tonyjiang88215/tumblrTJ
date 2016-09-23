@@ -2,56 +2,45 @@
  * Created by TonyJiang on 16/7/13.
  */
 
-import {observable, transaction, map} from 'mobx';
+import {observe, observable, transaction, map} from 'mobx';
 import axios from 'axios';
 
-import Entity from './entity/Entity';
-import Immutable from 'immutable';
+import FollowEntity from './entity/FollowEntity';
+import Store from './Store';
 
 import TipHelper from '../helpers/tip';
 
-
-class Follow extends Entity {
-    id;
-
-    constructor(id) {
-        super(id);
-    }
-
-    static get fields() {
-        return Immutable.fromJS([
-            {name: 'id'},
-            {name: 'name'},
-            {name: 'prefix'},
-            {name: 'info'},
-            {name: 'finishCount'},
-            {name: 'update_at'}
-        ]);
-    }
-
-}
-
-class FollowStore {
-
-    // @observable _cacheFollows = map();
-
-    updateTimeStamp = 0;
-
-    //5分钟更新一次
-    updateTimeUnit = 5 * 60 * 1000;
+class FollowStore extends Store{
 
     constructor() {
-        this._cacheFollows = observable(map());
+        super(FollowEntity);
+
+        this._cacheIDS = observable([]);
+
+        this.initObserver();
+        this._loadFollows();
+
     }
 
+    initObserver(){
+        observe(this.cacheRecords, this.observeDataChange);
+    }
 
-    get follow() {
+    observeDataChange = (change) => {
+        const {type, newValue} = change;
 
-        if (Date.now() > this.updateTimeStamp + this.updateTimeUnit) {
-            this._loadFollows();
+        if(type == 'add'){
+            this._cacheIDS.push(newValue.id);
         }
 
-        return this._cacheFollows;
+    }
+
+    get follow() {
+        return this.cacheRecords;
+    }
+
+    get followIDS(){
+        return this._cacheIDS;
     }
 
     addFollow(data) {
@@ -85,39 +74,6 @@ class FollowStore {
 
     }
 
-    syncFollow(id, blogInfo, finishCount) {
-
-        const url = `http://localhost:3000/follow/sync/${id}`;
-        const params = {
-            info: blogInfo
-        };
-
-        return axios.post(url, params)
-            .then(response => {
-
-                const {status, data} = response;
-                if (status == 200) {
-
-                    if (data.result == true) {
-                        this._syncCacheModel({
-                            id: id,
-                            info: blogInfo,
-                            finishCount: finishCount
-                        });
-
-                        return Promise.resolve();
-                    } else {
-                        return Promise.reject();
-                    }
-
-                }
-
-            }).catch(err => {
-                TipHelper.show({message: err});
-                return Promise.reject();
-            });
-    }
-
     _loadFollows() {
 
         axios.get('http://localhost:3000/follow/list').then((response) => {
@@ -139,43 +95,6 @@ class FollowStore {
 
     }
 
-    _syncCacheModel(item) {
-        const id = item.id;
-
-        const cacheItem = this._getCache(id, true, (_cacheItem) => {
-
-            const fields = Follow.fields.toJS();
-            fields.forEach((field) => {
-                var key = field.name;
-                if (item.hasOwnProperty(key) && _cacheItem[key] !== item[key]) {
-                    _cacheItem[key] = item[key];
-                }
-            });
-        });
-
-        return cacheItem;
-    }
-
-    _getCache(id, createIfNotExists = true, dataSetter) {
-        let follow = this._cacheFollows.get(`${id}`);
-
-        if (!follow && createIfNotExists) {
-            follow = new Follow(id);
-
-            if (typeof(dataSetter) === 'function') {
-                dataSetter(follow);
-            }
-
-            this._cacheFollows.set(`${id}`, follow);
-        }
-        else {
-            if (typeof(dataSetter) === 'function') {
-                dataSetter(follow);
-            }
-        }
-
-        return follow;
-    }
 
 }
 

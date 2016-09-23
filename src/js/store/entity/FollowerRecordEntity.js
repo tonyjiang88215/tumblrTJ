@@ -2,7 +2,9 @@
  * Created by TonyJiang on 16/9/22.
  */
 import Entity from './Entity';
-export default class Record extends Entity {
+import Immutable from 'immutable';
+
+export default class FollowerRecord extends Entity {
     id;
 
     constructor(id) {
@@ -12,8 +14,8 @@ export default class Record extends Entity {
     static get fields() {
         return Immutable.fromJS([
             {name: 'id'},
-            {name: 'follow_id'},
-            {name: 'original_json'},
+            {name: 'count', value: 0},
+            {name: 'list'},
         ]);
     }
 
