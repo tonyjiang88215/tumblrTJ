@@ -17,16 +17,16 @@ class FollowStore extends Store{
 
         this._cacheIDS = observable([]);
 
-        this.initObserver();
+        this._initObserver();
         this._loadFollows();
 
     }
 
-    initObserver(){
-        observe(this.cacheRecords, this.observeDataChange);
+    _initObserver(){
+        observe(this.cacheRecords, this._observeDataChange);
     }
 
-    observeDataChange = (change) => {
+    _observeDataChange = (change) => {
         const {type, newValue} = change;
 
         if(type == 'add'){
@@ -35,12 +35,25 @@ class FollowStore extends Store{
 
     }
 
-    get follow() {
-        return this.cacheRecords;
-    }
+    _loadFollows() {
 
-    get followIDS(){
-        return this._cacheIDS;
+        axios.get('http://localhost:3000/follow/list').then((response) => {
+
+            const {status, data} = response;
+            if (status == 200) {
+                transaction(() => {
+                    data.data.forEach((item) => {
+                        this._syncCacheModel(item);
+                    });
+                });
+
+            }
+
+
+        }).catch((err) => {
+            TipHelper.show({message: err});
+        });
+
     }
 
     addFollow(data) {
@@ -74,26 +87,17 @@ class FollowStore extends Store{
 
     }
 
-    _loadFollows() {
-
-        axios.get('http://localhost:3000/follow/list').then((response) => {
-
-            const {status, data} = response;
-            if (status == 200) {
-                transaction(() => {
-                    data.data.forEach((item) => {
-                        this._syncCacheModel(item);
-                    });
-                });
-
-            }
-
-
-        }).catch((err) => {
-            TipHelper.show({message: err});
-        });
-
+    get follow() {
+        return this.cacheRecords;
     }
+
+    get followIDS(){
+        return this._cacheIDS;
+    }
+
+
+
+
 
 
 }

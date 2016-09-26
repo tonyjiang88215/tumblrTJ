@@ -2,9 +2,10 @@
  * Created by TonyJiang on 16/9/18.
  */
 import React from "react";
-import {observable} from "mobx";
+import {observable, observe} from "mobx";
 import {observer} from "mobx-react";
 import tumblrAPI from '../../api/TumblrAPI';
+import store from "../../store";
 
 import DashboardItem from './DashboardItem';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -27,11 +28,11 @@ export default class OnlineList extends React.Component{
     });
 
     data = [];
+    dataPtr = {};
 
     constructor(...args){
         super(...args);
 
-        this.pullList = ::this.pullList;
     }
 
     componentWillMount() {
@@ -50,9 +51,10 @@ export default class OnlineList extends React.Component{
     }
 
     render(){
+        console.log('online list render');
         const {follower} = this.state;
         let listHTML = this.data.map(function (item, index) {
-            return <DashboardItem follower={follower} item={item} key={item.id}/>
+            return <DashboardItem follower={follower} item={item} key={item.id} online={true} />
         });
 
         return (
@@ -83,7 +85,7 @@ export default class OnlineList extends React.Component{
     }
 
 
-    pullList() {
+    pullList = () => {
         if(this.state.loading){
             return;
         }
@@ -91,19 +93,27 @@ export default class OnlineList extends React.Component{
 
         const {follower} = this.state;
 
-        tumblrAPI.pull(follower.prefix, this.state.start, this.state.num)
-            .then(data => {
+        setTimeout(() => {
 
-                this.state.loading = false;
-                this.state.start = this.state.start + this.state.num;
-                this.data = this.data.concat(data.posts);
-                this.forceUpdate();
+            tumblrAPI.pull(follower.prefix, this.state.start, this.state.num)
+                .then(data => {
+                    console.log('get PullList finished');
 
-            }).catch(err => {
-console.log('pull error', err);
+                    this.state.loading = false;
+                    this.state.start = this.state.start + this.state.num;
+                    data.posts.map(item => {
+                        this.data.push(item);
+                        this.dataPtr[item.id] = item;
+                    });
+                    this.forceUpdate();
+
+                }).catch(err => {
                 this.state.loading = false;
 
             });
+
+        }, 500);
+
 
     }
 

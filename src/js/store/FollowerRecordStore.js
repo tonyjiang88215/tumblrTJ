@@ -29,12 +29,12 @@ export default class FollowerRecordStore extends Store{
         if(followerRecord.list.length == 0){
             console.log('query favorite list');
 
-            store.recordStore.getRecordList(id);
+            store.favoriteRecordStore.getRecordList(id);
 
             RecordAPI.getFavoriteList(id)
                 .then(data => {
                     followerRecord.count = data.length;
-                    store.recordStore.
+                    store.favoriteRecordStore.
                     data.map(record => followerRecord.list.push(record));
                 })
                 .catch(err => {

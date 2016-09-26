@@ -2,12 +2,14 @@
  * Created by TonyJiang on 16/9/18.
  */
 import React from "react";
+import {observer} from 'mobx-react';
 
 import store from '../../store';
 import RecordAPI from '../../api/RecordAPI';
 
 import DashboardItem from './DashboardItem';
 
+@observer
 export default class FavoriteList extends React.Component{
 
     static defaultProps = {
@@ -21,23 +23,19 @@ export default class FavoriteList extends React.Component{
         start: 0
     };
 
-    data = [];
-
     componentWillMount() {
-        this.pullList(this.props.follower);
+        store.favoriteRecordStore.followerID = this.props.follower.id;
     }
 
     //更换目标
     componentWillReceiveProps(nextProps) {
-        this.data.length = 0;
-        // this.getInitInfo(nextProps.follower.prefix);
-        this.pullList(nextProps.follower);
-        //this.pullList();
+        store.favoriteRecordStore.followerID = nextProps.follower.id;
     }
 
     render(){
-        let listHTML = this.data.map(function (item, index) {
-            return <DashboardItem item={item} key={item.id}/>
+        console.log('favrote list render');
+        let listHTML = store.favoriteRecordStore.list.map(function (item, index) {
+            return <DashboardItem item={item.original_json} key={item.id}/>
         });
 
         return (
@@ -49,19 +47,19 @@ export default class FavoriteList extends React.Component{
         );
     }
 
-    pullList(follower) {
-
-        if (!follower.id) {
-            return;
-        }
-
-        RecordAPI.getFavoriteList(follower.id).then(data => {
-            const originalData = data.map(item => item.original_json);
-
-            this.data = this.data.concat(originalData);
-            this.forceUpdate();
-        });
-
-    }
+    // pullList(follower) {
+    //
+    //     if (!follower.id) {
+    //         return;
+    //     }
+    //
+    //     RecordAPI.getFavoriteList(follower.id).then(data => {
+    //         const originalData = data.map(item => item.original_json);
+    //
+    //         this.data = this.data.concat(originalData);
+    //         this.forceUpdate();
+    //     });
+    //
+    // }
 
 }

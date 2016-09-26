@@ -3,7 +3,7 @@
  */
 import {observable} from 'mobx';
 import FollowStore from './FollowStore';
-import RecordStore from './RecordStore';
+import FavoriteRecordStore from './FavoriteRecordStore';
 import FollowerRecordStore from './FollowerRecordStore';
 
 
@@ -16,7 +16,7 @@ const store = {
     
     followStore: new FollowStore(),
     followerRecordStore: new FollowerRecordStore(),
-    recordStore: new RecordStore()
+    favoriteRecordStore: new FavoriteRecordStore()
 };
 
 export default store;

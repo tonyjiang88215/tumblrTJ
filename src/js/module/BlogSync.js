@@ -27,35 +27,35 @@ class BlogSync{
         return this._currentThreadCount < this._maxThreadCount && this._queue.length > 0;
     }
 
-    next(){
-
-        this._currentThreadCount++;
-
-        const {follower, resolve, reject} = this._queue.shift();
-
-        Promise.all([
-            tumblrAPI.blog(follower.prefix),
-            store.recordStore.getRecordCount(follower.id)
-
-        ]).then(([blogInfo, finishCount]) => {
-
-            this._currentThreadCount--;
-            if(this.canDo()){
-                this.next();
-            }
-
-            this._currentThreadCount--;
-            resolve({blogInfo, finishCount});
-
-
-        }).catch(err => {
-            return Promise.reject(err);
-        });
-
-
-
-
-    }
+    // next(){
+    //
+    //     this._currentThreadCount++;
+    //
+    //     const {follower, resolve, reject} = this._queue.shift();
+    //
+    //     Promise.all([
+    //         tumblrAPI.blog(follower.prefix),
+    //         store.favoriteRecordStore.getRecordCount(follower.id)
+    //
+    //     ]).then(([blogInfo, finishCount]) => {
+    //
+    //         this._currentThreadCount--;
+    //         if(this.canDo()){
+    //             this.next();
+    //         }
+    //
+    //         this._currentThreadCount--;
+    //         resolve({blogInfo, finishCount});
+    //
+    //
+    //     }).catch(err => {
+    //         return Promise.reject(err);
+    //     });
+    //
+    //
+    //
+    //
+    // }
 
     push(follower){
 

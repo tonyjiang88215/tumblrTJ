@@ -55,8 +55,6 @@ class IndexPage extends Component{
 
     render(){
         
-        console.log('indexPage render');
-
         return (
             <div className="index">
                 <div className="left">
@@ -72,7 +70,6 @@ class IndexPage extends Component{
     }
 
     onChangeFollow(data){
-        console.log('on change follow')
         this.setState({
             currentFollower : data
         });

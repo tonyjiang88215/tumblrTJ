@@ -4,7 +4,7 @@
 import Entity from './Entity';
 import Immutable from 'immutable';
 
-export default class RecordEntity extends Entity {
+export default class FavoriteRecordEntity extends Entity {
     id;
 
     constructor(id) {

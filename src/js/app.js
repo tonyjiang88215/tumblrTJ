@@ -23,11 +23,9 @@ class Application{
     }
 
     startUp(){
-        console.log('start up');
         ReactDOM.render(<RouterHandler /> , document.getElementById('app'));
     }
 
 }
-console.log('112233');
 
 new Application().startUp();

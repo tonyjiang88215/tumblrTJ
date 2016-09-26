@@ -54,6 +54,10 @@ export default class Store{
         return item;
     }
 
+    hasCache(id){
+        return this._cacheRecords.has(`${id}`);
+    }
+
     get cacheRecords(){
         return this._cacheRecords;
     }

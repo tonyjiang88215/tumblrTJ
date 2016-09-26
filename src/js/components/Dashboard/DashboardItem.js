@@ -2,6 +2,8 @@
  * Created by tonyjiang on 16/3/10.
  */
 import React , {Component} from 'react';
+import ReactDOM from 'react-dom';
+
 import FontIcon from 'material-ui/FontIcon';
 import {grey500} from 'material-ui/styles/colors';
 import TipHelper from '../../helpers/tip';
@@ -12,17 +14,60 @@ class DashboardItem extends Component{
 
     static defaultProps = {
         item: {},
-        follower: {}
+        follower: {},
+        online: false
     }
 
     state = {
-        expend :false
+        expend: false,
+        favorited: false
     };
 
+    componentWillMount(){
+        const {item, online} = this.props;
+        if(online){
+            this.state.favorited = store.favoriteRecordStore.hasCache(item.id);
+            console.log(this.state.favorited);
+        }
 
+
+    }
+
+    componentDidMount(){
+        const {item, online} = this.props;
+        if(online){
+            this.state.favorited = store.favoriteRecordStore.hasCache(item.id);
+        }
+
+        this.dealVideo();
+    }
+
+    componentDidUpdate(){
+        const {item, online} = this.props;
+        if(online){
+            this.state.favorited = store.favoriteRecordStore.hasCache(item.id);
+        }
+        this.dealVideo();
+    }
+
+    dealVideo(){
+        //如果是视频, 需要设置video标签的属性, 获取到视频地址
+        const {item} =this.props;
+        if(item.type == 'video'){
+            const domNode = ReactDOM.findDOMNode(this);
+            const videoDOM = domNode.getElementsByTagName('video')[0];
+            if(videoDOM){
+                videoDOM.setAttribute('controls', 'true');
+                videoDOM.setAttribute('width', '100%');
+                videoDOM.setAttribute('height', 'auto');
+            }
+
+        }
+    }
 
     render(){
-        let item = this.props.item;
+        const {item, online} = this.props;
+        const {favorited} = this.state;
 
         let _photos = null;
 
@@ -75,7 +120,11 @@ class DashboardItem extends Component{
                 <div className="item-title" onClick={this.expendHandler}>
                     <div className="material-icons title-icon" color={grey500} >{typeIcon}</div>
                     <div>{item.slug}</div>
-                    <div className="material-icons title-icon" color={grey500} onClick={this.favoriteHandler} >favorite</div>
+                    {
+                        online &&
+                        <div className={"material-icons title-icon favorite-icon" + (favorited ? ' already' : '')} onClick={this.favoriteHandler} >favorite</div>
+
+                    }
                     <div className="material-icons title-icon expend-icon" color={grey500} >{this.state.expend ? 'arrow_drop_up' : 'arrow_drop_down'}</div>
 
                 </div>
@@ -103,10 +152,13 @@ class DashboardItem extends Component{
 
         const {follower, item} = this.props;
 
-        store.recordStore.addRecord({
+        store.favoriteRecordStore.addRecord({
             id: follower.id,
             json: item
         }).then((response) => {
+            this.setState({
+                favorited: true
+            });
             TipHelper.show({message: '收藏成功'});
         }).catch(err => {
             TipHelper.show({message: err});

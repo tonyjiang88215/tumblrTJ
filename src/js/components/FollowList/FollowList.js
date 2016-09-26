@@ -71,8 +71,9 @@ class FollowList extends Component {
         return (
             <FollowListItem
                 key={key}
-                blog={item}
+                item={item}
                 onClick={this.onItemClick}
+                onDlete={this.onItemDelete}
             />
         );
 
@@ -80,9 +81,7 @@ class FollowList extends Component {
 
     render() {
 
-        console.log('followerList render')
-
-        const dataSize = this.list ? this.list.size : 0;
+        const dataSize = this.listIDS.length;
         const virtualListStyle = {
             flexGrow: 1,
             width: 'auto',
@@ -121,6 +120,12 @@ class FollowList extends Component {
     onItemClick = (item) => {
         this.setState({selected: item.id});
         this.props.onItemClick && this.props.onItemClick(item);
+    }
+
+    onItemDelete = (item) => {
+
+
+
     }
 
     onAddNewFollow = () => {

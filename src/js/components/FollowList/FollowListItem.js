@@ -8,7 +8,8 @@ class FollowListItem extends React.Component {
 
     static propTypes = {
         onClick: React.PropTypes.func,
-        blog: React.PropTypes.object.isRequired
+        onDelete: React.PropTypes.func,
+        item: React.PropTypes.object.isRequired
     };
 
     static contextTypes = {
@@ -22,12 +23,12 @@ class FollowListItem extends React.Component {
 
     componentDidMount() {
 
-        // this.checkBlogUpdate(this.props.blog);
+        // this.checkBlogUpdate(this.props.item);
 
     }
 
     render() {
-        const {id, name} = this.props.blog;
+        const {id, name} = this.props.item;
         const {selected} = this.context;
 
         const className = 'following-item ' + (id == selected ? 'selected' : '');
@@ -36,16 +37,21 @@ class FollowListItem extends React.Component {
             <div className={className} onClick={::this.onClick}>
                 <div className="following-item-label">{name}</div>
                 <div className="sync-number">
-                    {/*<div className="number label label-primary">{this.state.totalCount}</div>*/}
-                    {/*<div className="number label label-success">{this.state.finishCount}</div>*/}
+                    <div className="material-icons delete-icon" onClick={this.onDelete} >delete</div>
                 </div>
             </div>
         );
     }
 
-    onClick() {
+    onClick(){
 
-        this.props.onClick && this.props.onClick(this.props.blog);
+        this.props.onClick && this.props.onClick(this.props.item);
+
+    }
+
+    onDelete(){
+
+        this.props.onDelete && this.props.onDelete(this.props.item);
 
     }
 
